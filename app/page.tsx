@@ -1,65 +1,80 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import Button from "@/components/ui/Button";
-import Input from "@/components/ui/Input";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import Hero from "@/components/Hero";
+import Card from "@/components/Card";
+
+type Craft = {
+  id: number;
+  title: string;
+  category: string;
+  price: number;
+};
 
 export default function Home() {
-  const [email, setEmail] = useState("");
-  const [dark, setDark] = useState(false);
+  const [crafts, setCrafts] = useState<Craft[]>([]);
+  const [loading, setLoading] = useState(true);
+const [error, setError] = useState("");
 
   useEffect(() => {
-    const savedTheme = localStorage.getItem("theme");
-    if (savedTheme === "dark") {
-      setDark(true);
-    }
-  }, []);
-
-  const toggleTheme = () => {
-    const nextTheme = !dark;
-    setDark(nextTheme);
-    localStorage.setItem("theme", nextTheme ? "dark" : "light");
-  };
-
+  fetch("http://localhost:5000/api/crafts")
+    .then((res) => {
+      if (!res.ok) {
+        throw new Error("Failed to fetch crafts");
+      }
+      return res.json();
+    })
+    .then((data) => {
+      setCrafts(data);
+      setLoading(false);
+    })
+    .catch((err) => {
+      console.error(err);
+      setError("Unable to load crafts.");
+      setLoading(false);
+    });
+}, []);
   return (
-    <main
-      className={`min-h-screen flex items-center justify-center px-6 transition-all duration-300 ${
-        dark ? "bg-stone-900" : "bg-[#F6EFD9]"
-      }`}
-    >
-      <button
-        onClick={toggleTheme}
-        className="absolute top-6 right-6 bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-xl shadow-md"
-      >
-        {dark ? "☀️ Light" : "🌙 Dark"}
-      </button>
+    <>
+      <Navbar />
 
-      <div
-        className={`w-full max-w-md rounded-2xl shadow-xl p-8 transition-all duration-300 ${
-          dark ? "bg-stone-800 text-white" : "bg-white text-stone-900"
-        }`}
-      >
-        <h1 className="text-4xl font-bold text-orange-600 text-center mb-2">
-          Welcome Back
-        </h1>
+      <Hero />
 
-        <p className={dark ? "text-stone-300 text-center mb-8" : "text-stone-600 text-center mb-8"}>
-          Login to your CraftBridge account
-        </p>
+      <section className="py-24 bg-[#FFF9F1]">
 
-        <Input
-          label="Email"
-          placeholder="Enter your email"
-          type="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          error={email === "" ? "Email is required" : ""}
-        />
+  <div className="max-w-7xl mx-auto px-6">
 
-        <div className="mt-6">
-          <Button size="lg">Login</Button>
-        </div>
-      </div>
-    </main>
+    <h2 className="text-5xl font-bold text-center text-orange-700 mb-16">
+      Featured Crafts
+    </h2>
+
+{loading ? (
+  <div className="text-center text-2xl">
+    Loading...
+  </div>
+) : error ? (
+  <div className="text-center text-red-600 text-xl">
+    {error}
+  </div>
+) : (
+  <div className="grid gap-10 md:grid-cols-2 lg:grid-cols-3">
+    {crafts.map((craft) => (
+      <Card
+        key={craft.id}
+        title={craft.title}
+        category={craft.category}
+        price={craft.price}
+      />
+    ))}
+  </div>
+)}
+
+  </div>
+
+</section>
+      <Footer />
+    </>
   );
 }

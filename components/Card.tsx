@@ -1,35 +1,61 @@
 type CardProps = {
   title: string;
-  description: string;
-  image: string;
+  category: string;
+  price: number;
 };
 
 export default function Card({
   title,
-  description,
-  image,
+  category,
+  price,
 }: CardProps) {
+
+  let image = "";
+
+  if (title === "Handmade Vase") {
+    image =
+      "https://images.unsplash.com/photo-1578749556568-bc2c40e68b61?w=800";
+  }
+
+  if (title === "Wooden Lamp") {
+    image =
+      "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800";
+  }
+
+  if (title === "Handwoven Basket") {
+    image =
+      "https://images.unsplash.com/photo-1518509562904-e7ef99cdcc86?w=800";
+  }
+
   return (
-    <div className="bg-white rounded-2xl shadow-lg overflow-hidden hover:scale-105 hover:shadow-2xl transition duration-300">
+    <div className="bg-white rounded-3xl overflow-hidden shadow-lg hover:shadow-2xl transition hover:-translate-y-2">
+
       <img
         src={image}
         alt={title}
-        className="w-full h-52 object-cover"
+        className="w-full h-64 object-cover"
       />
 
       <div className="p-6">
-        <h3 className="text-2xl font-bold text-orange-700">
-          {title}
-        </h3>
 
-        <p className="text-gray-600 mt-3">
-          {description}
+        <h2 className="text-2xl font-bold text-orange-700">
+          {title}
+        </h2>
+
+        <p className="mt-2 text-gray-600">
+          {category}
         </p>
 
-        <button className="mt-5 bg-orange-500 text-white px-5 py-2 rounded-lg hover:bg-orange-600 transition">
+        <p className="mt-4 text-2xl font-bold text-green-600">
+          ₹{price}
+        </p>
+
+        <button className="mt-6 w-full bg-orange-600 text-white py-3 rounded-xl hover:bg-orange-700">
           View Product
         </button>
+
       </div>
+
     </div>
   );
 }

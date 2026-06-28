@@ -1,0 +1,54 @@
+{
+  "info": {
+    "name": "Week 4 CraftBridge API Collection",
+    "description": "Manual API test documentation for internship submission"
+  },
+  "requests": [
+    {
+      "name": "Get All Crafts",
+      "method": "GET",
+      "url": "http://localhost:5000/api/crafts",
+      "expected_status": 200
+    },
+    {
+      "name": "Get Craft By ID",
+      "method": "GET",
+      "url": "http://localhost:5000/api/crafts/1",
+      "expected_status": 200
+    },
+    {
+      "name": "Create Craft",
+      "method": "POST",
+      "url": "http://localhost:5000/api/crafts",
+      "body": {
+        "title": "Clay Pot",
+        "category": "Pottery",
+        "price": 600
+      },
+      "expected_status": 201
+    },
+    {
+      "name": "Update Craft",
+      "method": "PUT",
+      "url": "http://localhost:5000/api/crafts/2",
+      "body": {
+        "title": "Updated Lamp",
+        "category": "Woodwork",
+        "price": 1500
+      },
+      "expected_status": 200
+    },
+    {
+      "name": "Delete Craft",
+      "method": "DELETE",
+      "url": "http://localhost:5000/api/crafts/3",
+      "expected_status": 204
+    },
+    {
+      "name": "Search Crafts",
+      "method": "GET",
+      "url": "http://localhost:5000/api/crafts/search?q=wood",
+      "expected_status": 200
+    }
+  ]
+}
