@@ -44,3 +44,31 @@ Backend will run at:
 ```
 http://localhost:5000
 ```
+## Database Choice
+
+MongoDB Atlas was chosen because CraftBridge stores craft items as documents. MongoDB provides a flexible schema and integrates well with Node.js using Mongoose.
+## Database Setup
+
+1. Clone the repository
+2. Navigate to backend
+3. Run:
+
+```bash
+npm install
+```
+
+4. Create a `.env` file:
+
+```env
+PORT=5000
+MONGO_URI=your_connection_string
+```
+
+5. Run
+
+```bash
+npm run dev
+```
+## Schema Diagram
+
+![Schema](schema.png)
