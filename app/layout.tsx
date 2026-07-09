@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Poppins, Playfair_Display } from "next/font/google";
 import "./globals.css";
+import { AuthProvider } from "@/context/AuthContext";
 import Navbar from "@/components/Navbar";
 
 const poppins = Poppins({
@@ -27,13 +28,15 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${poppins.variable} ${playfair.variable}`}>
+     <body className={`${poppins.variable} ${playfair.variable}`}>
+      <AuthProvider>
         <Navbar />
 
         <main className="pt-20">
           {children}
         </main>
-      </body>
+      </AuthProvider>
+    </body> 
     </html>
   );
 }

@@ -2,6 +2,8 @@ const express = require("express");
 const cors = require("cors");
 require("dotenv").config();
 const mongoose = require("mongoose");
+const authRoutes = require("./routes/auth");
+const rateLimit = require("express-rate-limit");
 
 const craftRoutes = require("./routes/crafts");
 const errorHandler = require("./middleware/errorHandler");
@@ -15,12 +17,21 @@ mongoose
   .catch((err) => {
     console.error("❌ MongoDB Connection Error:", err);
   });
-  
+const authLimiter = rateLimit({
+  windowMs: 15 * 60 * 1000, // 15 minutes
+  max: 5,
+  message: {
+    message: "Too many requests. Please try again after 15 minutes.",
+  },
+  standardHeaders: true,
+  legacyHeaders: false,
+});
 // Middleware
 app.use(cors());
 app.use(express.json());
 
 app.use("/api/crafts", craftRoutes);
+app.use("/api/auth", authLimiter, authRoutes);
 
 // Test Route
 app.get("/", (req, res) => {

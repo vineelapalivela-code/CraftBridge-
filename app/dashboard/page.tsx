@@ -1,5 +1,6 @@
 "use client";
 
+import ProtectedRoute from "@/components/ProtectedRoute";
 import { useState } from "react";
 import Link from "next/link";
 import {
@@ -57,7 +58,7 @@ export default function Dashboard() {
   }
 
   return (
-    <>
+    <ProtectedRoute>
       <main className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100 dark:from-gray-950 dark:via-gray-900 dark:to-black pt-32 pb-24 transition-colors duration-300">
 
         <div className="max-w-7xl mx-auto px-6">
@@ -283,6 +284,6 @@ export default function Dashboard() {
 
       <Footer />
 
-    </>
+    </ProtectedRoute>
   );
 }

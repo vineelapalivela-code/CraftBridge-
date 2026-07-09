@@ -1,10 +1,59 @@
 "use client";
 
+import { signIn } from "next-auth/react";
 import { Eye, EyeOff, Lock, Mail } from "lucide-react";
 import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import { useAuth } from "@/context/AuthContext";
 
 export default function LoginPage() {
+  const { setIsLoggedIn } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const handleLogin = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  setLoading(true);
+
+  try {
+    const response = await fetch("http://localhost:5000/api/auth/login", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        email,
+        password,
+      }),
+    });
+
+    const data = await response.json();
+
+    if (!response.ok) {
+      alert(data.message || "Login failed");
+      return;
+    }
+
+localStorage.setItem("token", data.token);
+setIsLoggedIn(true);
+
+alert("Login Successful!");
+
+// Tell the navbar to update immediately
+window.dispatchEvent(new Event("authChanged"));
+
+router.push("/dashboard");
+  } catch (error) {
+    console.error(error);
+    alert("Something went wrong!");
+  } finally {
+    setLoading(false);
+  }
+};
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-amber-50 to-orange-100 dark:from-gray-950 dark:via-gray-900 dark:to-black transition-colors duration-300">
@@ -54,7 +103,7 @@ export default function LoginPage() {
               Login to your CraftBridge account
             </p>
 
-            <form className="mt-10 space-y-6">
+            <form onSubmit={handleLogin} className="mt-10 space-y-6">
 
               {/* Email */}
 
@@ -74,7 +123,9 @@ export default function LoginPage() {
                   <input
                     type="email"
                     placeholder="Enter your email"
-                    className="ml-3 w-full outline-none bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="ml-3 w-full outline-none bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"                    
                   />
 
                 </div>
@@ -96,11 +147,13 @@ export default function LoginPage() {
                     size={20}
                   />
 
-                  <input
-                    type={showPassword ? "text" : "password"}
-                    placeholder="Enter your password"
-                    className="ml-3 w-full outline-none bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
-                  />
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="ml-3 w-full outline-none bg-transparent text-gray-900 dark:text-white placeholder:text-gray-400 dark:placeholder:text-gray-500"
+                />
 
                   <button
                     type="button"
@@ -135,24 +188,42 @@ export default function LoginPage() {
 
                 </label>
 
-                <a
+                <Link
                   href="#"
                   className="text-orange-600 hover:underline"
                 >
                   Forgot Password?
-                </a>
+                </Link>
 
               </div>
 
               {/* Button */}
 
               <button
-                className="w-full bg-orange-600 hover:bg-orange-700 transition text-white py-4 rounded-full text-lg font-semibold shadow-lg"
+                type="submit"
+                disabled={loading}
+                className="w-full bg-orange-600 hover:bg-orange-700 transition text-white py-4 rounded-full text-lg font-semibold shadow-lg disabled:opacity-50"
               >
-                Login
+                {loading ? "Logging in..." : "Login"}
               </button>
 
             </form>
+            <div className="mt-6">
+              <button
+                type="button"
+                onClick={() => signIn("google", { callbackUrl: "/" })}
+                className="w-full border border-gray-300 dark:border-gray-700 py-4 rounded-full flex items-center justify-center gap-3 hover:bg-gray-100 dark:hover:bg-gray-800 transition"
+              >
+                <img
+                  src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg"
+                  alt="Google"
+                  className="w-5 h-5"
+                />
+                <span className="font-medium text-gray-700 dark:text-white">
+                  Sign in with Google
+                </span>
+              </button>
+            </div>
 
             <p className="mt-8 text-center text-gray-500 dark:text-gray-300">
 
@@ -168,7 +239,64 @@ export default function LoginPage() {
 
         </div>
 
-      </main>
+            </main>
+
+      {/* Footer */}
+
+      <footer className="border-t border-orange-200 dark:border-gray-800 bg-white/60 dark:bg-gray-950/60 backdrop-blur-md">
+
+        <div className="max-w-6xl mx-auto px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
+
+          <div className="text-center md:text-left">
+
+            <h3
+              className="text-lg font-semibold text-orange-600"
+              style={{ fontFamily: "var(--font-playfair)" }}
+            >
+              CraftBridge
+            </h3>
+
+            <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">
+              Connecting artisans with the world, one handmade creation at a
+              time.
+            </p>
+
+          </div>
+
+          <div className="flex items-center gap-6 text-sm">
+
+            <Link
+              href="#"
+              className="text-gray-500 hover:text-orange-600 transition"
+            >
+              Privacy
+            </Link>
+
+            <Link
+              href="#"
+              className="text-gray-500 hover:text-orange-600 transition"
+            >
+              Terms
+            </Link>
+
+            <Link
+              href="#"
+              className="text-gray-500 hover:text-orange-600 transition"
+            >
+              Contact
+            </Link>
+
+          </div>
+
+        </div>
+
+        <div className="border-t border-orange-200 dark:border-gray-800 py-4 text-center text-sm text-gray-500 dark:text-gray-400">
+
+          © 2026 CraftBridge • Made with ❤️ for artisans.
+
+        </div>
+
+      </footer>
 
     </div>
   );
